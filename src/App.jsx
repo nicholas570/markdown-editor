@@ -1,61 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 import marked from 'marked';
 
 import sampleText from './sampleText';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: sampleText,
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
+function App() {
+  const [state, setState] = useState();
 
-  componentDidMount() {
+  useEffect(() => {
     const text = localStorage.getItem('text');
     if (text) {
-      this.setState({ text });
-    } else {
-      this.setState({ text: sampleText });
+      setState(text);
     }
-  }
+    setState(sampleText);
+  }, []);
 
-  componentDidUpdate() {
-    const { text } = this.state;
-    localStorage.setItem('text', text);
-  }
+  useEffect(() => {
+    localStorage.setItem('text', state);
+  }, [state]);
 
-  handleChange(e) {
-    this.setState({ text: e.target.value });
-  }
+  const handleChange = (e) => {
+    setState(e.target.value);
+  };
 
-  renderText(text) {
-    return marked(text, { sanitize: true });
-  }
+  const renderText = (text) => {
+    if (text) {
+      return marked(text, { sanitize: true });
+    }
+    return marked('Text not loading', { sanitize: true });
+  };
 
-  render() {
-    const { text } = this.state;
-    return (
-      <div className="container">
-        <div className="row">
-          <div className="col-sm-6">
-            <textarea
-              className="form-control"
-              rows="35"
-              value={text}
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="col-sm-6">
-            <div dangerouslySetInnerHTML={{ __html: this.renderText(text) }} />
-          </div>
+  return (
+    <div className="container">
+      <div className="row">
+        <div className="col-sm-6">
+          <textarea
+            className="form-control"
+            rows="35"
+            value={state}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="col-sm-6">
+          <div dangerouslySetInnerHTML={{ __html: renderText(state) }} />
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default App;

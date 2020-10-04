@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
-
 import marked from 'marked';
+
+import './App.css';
 
 import sampleText from './sampleText';
 
